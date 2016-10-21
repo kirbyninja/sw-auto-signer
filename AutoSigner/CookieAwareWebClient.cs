@@ -17,42 +17,47 @@ namespace AutoSigner
         }
 
         public CookieAwareWebClient()
-          : this(new CookieContainer())
+            : this(new CookieContainer())
         { }
 
         public CookieContainer CookieContainer { get; private set; }
 
-        public void Login(string loginPageAddress, NameValueCollection loginData, out string responseText)
+        public string Post(string address, NameValueCollection postData)
         {
             CookieContainer container;
 
-            var request = (HttpWebRequest)WebRequest.Create(loginPageAddress);
+            HttpWebRequest request = (HttpWebRequest)WebRequest.Create(address);
 
             request.Method = "POST";
             request.ContentType = "application/x-www-form-urlencoded";
 
-            var buffer = Encoding.ASCII.GetBytes(string.Join("&", GetDataStrings(loginData)));
+            Byte[] buffer = Encoding.ASCII.GetBytes(string.Join("&", GetDataStrings(postData)));
             request.ContentLength = buffer.Length;
 
-            using (var requestStream = request.GetRequestStream())
+            using (Stream requestStream = request.GetRequestStream())
             {
                 requestStream.Write(buffer, 0, buffer.Length);
             }
 
             container = request.CookieContainer = new CookieContainer();
 
-            using (var response = request.GetResponse())
+            string responseText = null;
+            using (WebResponse response = request.GetResponse())
             {
-                using (var responseStream = response.GetResponseStream())
+                if (response != null)
                 {
-                    using (var streamReader = new StreamReader(responseStream, Encoding.UTF8))
+                    using (Stream responseStream = response.GetResponseStream())
                     {
-                        responseText = streamReader.ReadToEnd();
+                        using (var streamReader = new StreamReader(responseStream, Encoding.UTF8))
+                        {
+                            responseText = streamReader.ReadToEnd();
+                        }
                     }
                 }
             }
 
             CookieContainer = container;
+            return responseText;
         }
 
         protected override WebRequest GetWebRequest(Uri address)
