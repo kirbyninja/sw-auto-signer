@@ -26,6 +26,17 @@ namespace AutoSigner
             InitializeComponent();
             deDate.SelectedDate = DateTime.Today;
             deDate.PreviewMouseUp += (s, e) => Mouse.Capture(null);
+
+            ceHour.PreviewTextInput += (s, e) =>
+            {
+                e.Handled = !IsTextAllowed(e.Text);
+            };
+        }
+
+        private static bool IsTextAllowed(string input)
+        {
+            Regex regex = new Regex("[^0-9]+"); //regex that matches disallowed text
+            return !regex.IsMatch(input);
         }
 
         private void btnSubmit_Click(object sender, RoutedEventArgs e)
@@ -97,6 +108,23 @@ namespace AutoSigner
             string pattern = @"<script>alert\('(\S*)'\)</script>";
             Match m = Regex.Match(input, pattern);
             return m.Success ? m.Groups[1].Value : null;
+        }
+
+        // Use the DataObject.Pasting Handler
+        private void TextBoxPasting(object sender, DataObjectPastingEventArgs e)
+        {
+            if (e.DataObject.GetDataPresent(typeof(string)))
+            {
+                string text = (string)e.DataObject.GetData(typeof(string));
+                if (!IsTextAllowed(text))
+                {
+                    e.CancelCommand();
+                }
+            }
+            else
+            {
+                e.CancelCommand();
+            }
         }
     }
 }
