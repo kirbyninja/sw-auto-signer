@@ -7,6 +7,7 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Controls.Primitives;
 using System.Windows.Data;
 using System.Windows.Documents;
 using System.Windows.Input;
@@ -33,7 +34,7 @@ namespace AutoSigner
         {
             InitializeComponent();
             deDate.SelectedDate = DateTime.Today;
-            deDate.PreviewMouseUp += (s, e) => Mouse.Capture(null);
+            deDate.PreviewMouseUp += (s, e) => { if (Mouse.Captured is CalendarItem) Mouse.Capture(null); };
             ceHour.PreviewTextInput += TextBox_PreviewTextInput;
             ceMinute.PreviewTextInput += TextBox_PreviewTextInput;
         }
