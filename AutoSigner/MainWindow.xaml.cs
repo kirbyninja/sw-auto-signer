@@ -29,6 +29,7 @@ namespace AutoSigner
         {
             InitializeComponent();
             deDate.SelectedDate = DateTime.Today;
+            deDate.SelectedDatesChanged += deDate_SelectedDatesChanged;
             deDate.PreviewMouseUp += (s, e) => { if (Mouse.Captured is CalendarItem) Mouse.Capture(null); };
             ceHour.PreviewTextInput += TextBox_PreviewTextInput;
             ceMinute.PreviewTextInput += TextBox_PreviewTextInput;
@@ -56,6 +57,13 @@ namespace AutoSigner
             string extractedText;
             TryExtractText(input, type, out extractedText);
             return extractedText;
+        }
+
+        private static bool IsDateAllowed(DateTime date)
+        {
+            if (date.Date < new DateTime(DateTime.Today.Year, DateTime.Today.Month, 1) || date.Date > DateTime.Today.Date)
+                return false;
+            return date.DayOfWeek != DayOfWeek.Sunday && date.DayOfWeek != DayOfWeek.Saturday;
         }
 
         private static bool IsTextAllowed(string input, TimeTextType type)
@@ -184,6 +192,16 @@ namespace AutoSigner
                 messages.Count(t => !t.Item1),
                 string.Join("\r\n", messages.Select(t =>
                     string.Format("{0}\t{1}", t.Item2.ToString("yyyy-MM-dd"), t.Item3)))));
+        }
+
+        private void deDate_SelectedDatesChanged(object sender, SelectionChangedEventArgs e)
+        {
+            deDate.SelectedDatesChanged -= deDate_SelectedDatesChanged;
+            var dates = SelectedDates.Where(date => IsDateAllowed(date)).ToArray();
+            SelectedDates.Clear();
+            foreach (DateTime date in dates)
+                SelectedDates.Add(date);
+            deDate.SelectedDatesChanged += deDate_SelectedDatesChanged;
         }
 
         private TimeTextType GetTimeTextType(object sender)
