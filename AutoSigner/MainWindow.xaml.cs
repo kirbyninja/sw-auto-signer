@@ -66,7 +66,7 @@ namespace AutoSigner
                 switch (type)
                 {
                     case TimeTextType.Hour:
-                        return number < 24 && number >= 0;
+                        return number <= 18 && number >= 8;
 
                     case TimeTextType.Minute:
                         return number < 60 && number >= 0;
