@@ -25,11 +25,6 @@ namespace AutoSigner
     {
         private const string url = "http://www.systemweb.com.tw:8080/AddSignInRecord.aspx";
 
-        private string hour;
-        private string minute;
-        private string password;
-        private string userName;
-
         public MainWindow()
         {
             InitializeComponent();
@@ -137,17 +132,12 @@ namespace AutoSigner
                 return;
             }
 
-            userName = teUserName.Text;
-            password = pePassword.Password;
-            hour = ceHour.Text;
-            minute = ceMinute.Text;
-
             var data = new NameValueCollection();
-            data.Add("txtId", userName);
-            data.Add("txtPwd", password);
+            data.Add("txtId", teUserName.Text);
+            data.Add("txtPwd", pePassword.Password);
             data.Add("txtDate", "");
-            data.Add("txtHour", hour);
-            data.Add("txtMinute", minute);
+            data.Add("txtHour", ceHour.Text);
+            data.Add("txtMinute", ceMinute.Text);
             data.Add("btnAddSignIn", "確定補登");
             data.Add("__EVENTTARGET", "");
             data.Add("__EVENTARGUMENT", "");
