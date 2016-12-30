@@ -35,7 +35,7 @@ namespace AutoSigner
             if (IsDateAllowed(DateTime.Today))
                 deDate.SelectedDate = DateTime.Today;
             deDate.SelectedDatesChanged += deDate_SelectedDatesChanged;
-            deDate.PreviewMouseUp += (s, e) => { if (Mouse.Captured is CalendarItem) Mouse.Capture(null); };
+            deDate.PreviewMouseUp += deDate_PreviewMouseUp;
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
@@ -221,6 +221,16 @@ namespace AutoSigner
                 messages.Count(t => !t.Item1),
                 string.Join("\r\n", messages.Select(t =>
                     string.Format("{0}\t{1}", t.Item2.ToString("yyyy-MM-dd"), t.Item3)))));
+        }
+
+        private void deDate_PreviewMouseUp(object sender, MouseButtonEventArgs e)
+        {
+            if (Mouse.Captured is CalendarItem)
+            {
+                var size = Mouse.GetPosition(deDate);
+                if (size.X > 0 && size.Y > 0 && size.X < deDate.RenderSize.Width && size.Y < deDate.RenderSize.Height)
+                    Mouse.Capture(null);
+            }
         }
 
         private void deDate_SelectedDatesChanged(object sender, SelectionChangedEventArgs e)
