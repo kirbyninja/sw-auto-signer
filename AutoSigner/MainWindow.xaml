@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:AutoSigner"
         mc:Ignorable="d"
-        Title="MainWindow" Height="299.369" Width="527.65" DataContext="{Binding RelativeSource={RelativeSource Self}}">
+        Title="MainWindow" Height="299.369" Width="527.65" DataContext="{Binding RelativeSource={RelativeSource Self}}" ResizeMode="NoResize">
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="1*" />
