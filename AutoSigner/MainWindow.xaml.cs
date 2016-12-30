@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -21,9 +22,12 @@ namespace AutoSigner
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
-    public partial class MainWindow : Window
+    public partial class MainWindow : Window, INotifyPropertyChanged
     {
         private const string url = "http://www.systemweb.com.tw:8080/AddSignInRecord.aspx";
+
+        private int hour = 10;
+        private int minute = 0;
 
         public MainWindow()
         {
@@ -31,9 +35,9 @@ namespace AutoSigner
             deDate.SelectedDate = DateTime.Today;
             deDate.SelectedDatesChanged += deDate_SelectedDatesChanged;
             deDate.PreviewMouseUp += (s, e) => { if (Mouse.Captured is CalendarItem) Mouse.Capture(null); };
-            ceHour.PreviewTextInput += TextBox_PreviewTextInput;
-            ceMinute.PreviewTextInput += TextBox_PreviewTextInput;
         }
+
+        public event PropertyChangedEventHandler PropertyChanged;
 
         private enum ExtractTextType
         {
@@ -43,14 +47,59 @@ namespace AutoSigner
             ViewState,
         }
 
-        private enum TimeTextType
+        public string Hour
         {
-            Hour,
-            Minute,
-            None,
+            get
+            {
+                return this.hour.ToString();
+            }
+            set
+            {
+                int tempHour;
+                if (int.TryParse(value, out tempHour))
+                {
+                    if (tempHour > 18) tempHour = 18;
+                    else if (tempHour < 8) tempHour = 8;
+
+                    if (tempHour != this.hour)
+                    {
+                        this.hour = tempHour;
+                        OnPropertyChanged("Hour");
+                    }
+                }
+            }
+        }
+
+        public string Minute
+        {
+            get
+            {
+                return this.minute.ToString();
+            }
+            set
+            {
+                int tempMinute;
+                if (int.TryParse(value, out tempMinute))
+                {
+                    if (tempMinute > 59) tempMinute = 59;
+                    else if (tempMinute < 0) tempMinute = 0;
+
+                    if (tempMinute != this.minute)
+                    {
+                        this.minute = tempMinute;
+                        OnPropertyChanged("Minute");
+                    }
+                }
+            }
         }
 
         private SelectedDatesCollection SelectedDates { get { return deDate.SelectedDates; } }
+
+        protected virtual void OnPropertyChanged(string propertyName)
+        {
+            if (PropertyChanged != null)
+                PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+        }
 
         private static string ExtractText(string input, ExtractTextType type)
         {
@@ -64,27 +113,6 @@ namespace AutoSigner
             if (date.Date < new DateTime(DateTime.Today.Year, DateTime.Today.Month, 1) || date.Date > DateTime.Today.Date)
                 return false;
             return date.DayOfWeek != DayOfWeek.Sunday && date.DayOfWeek != DayOfWeek.Saturday;
-        }
-
-        private static bool IsTextAllowed(string input, TimeTextType type)
-        {
-            int number;
-            if (int.TryParse(input, out number) && number.ToString() == input)
-            {
-                switch (type)
-                {
-                    case TimeTextType.Hour:
-                        return number <= 18 && number >= 8;
-
-                    case TimeTextType.Minute:
-                        return number < 60 && number >= 0;
-
-                    default:
-                        return true;
-                }
-            }
-            else
-                return false;
         }
 
         private static bool TryExtractText(string input, ExtractTextType type, out string extractedText)
@@ -202,44 +230,6 @@ namespace AutoSigner
             foreach (DateTime date in dates)
                 SelectedDates.Add(date);
             deDate.SelectedDatesChanged += deDate_SelectedDatesChanged;
-        }
-
-        private TimeTextType GetTimeTextType(object sender)
-        {
-            if (sender == ceHour)
-                return TimeTextType.Hour;
-            else if (sender == ceMinute)
-                return TimeTextType.Minute;
-            else
-                return TimeTextType.None;
-        }
-
-        private void TextBox_PreviewTextInput(object sender, TextCompositionEventArgs e)
-        {
-            if (sender is TextBox)
-            {
-                var textBox = sender as TextBox;
-
-                string input = textBox.Text.Insert(textBox.CaretIndex, e.Text);
-
-                e.Handled = !IsTextAllowed(input, GetTimeTextType(sender));
-            }
-        }
-
-        private void TextBoxPasting(object sender, DataObjectPastingEventArgs e)
-        {
-            if (e.DataObject.GetDataPresent(typeof(string)))
-            {
-                string text = (string)e.DataObject.GetData(typeof(string));
-                if (!IsTextAllowed(text, GetTimeTextType(sender)))
-                {
-                    e.CancelCommand();
-                }
-            }
-            else
-            {
-                e.CancelCommand();
-            }
         }
     }
 }
