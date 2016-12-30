@@ -32,7 +32,8 @@ namespace AutoSigner
         public MainWindow()
         {
             InitializeComponent();
-            deDate.SelectedDate = DateTime.Today;
+            if (IsDateAllowed(DateTime.Today))
+                deDate.SelectedDate = DateTime.Today;
             deDate.SelectedDatesChanged += deDate_SelectedDatesChanged;
             deDate.PreviewMouseUp += (s, e) => { if (Mouse.Captured is CalendarItem) Mouse.Capture(null); };
         }
