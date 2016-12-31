@@ -2,7 +2,9 @@
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
@@ -36,6 +38,9 @@ namespace AutoSigner
                 deDate.SelectedDate = DateTime.Today;
             deDate.SelectedDatesChanged += deDate_SelectedDatesChanged;
             deDate.PreviewMouseUp += deDate_PreviewMouseUp;
+
+            var fileVersionInfo = FileVersionInfo.GetVersionInfo(Assembly.GetExecutingAssembly().Location);
+            Title = string.Format("{0} {1}", fileVersionInfo.ProductName, fileVersionInfo.FileVersion);
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
