@@ -28,6 +28,7 @@ namespace AutoSigner
     {
         private const string url = "http://www.systemweb.com.tw:8080/AddSignInRecord.aspx";
 
+        private IEnumerable<DateTime> exceptionalDates = GetExceptionalDates();
         private int hour = 10;
         private int minute = 0;
 
@@ -114,11 +115,28 @@ namespace AutoSigner
             return extractedText;
         }
 
-        private static bool IsDateAllowed(DateTime date)
+        private static IEnumerable<DateTime> GetExceptionalDates()
         {
-            if (date.Date < new DateTime(DateTime.Today.Year, DateTime.Today.Month, 1) || date.Date > DateTime.Today.Date)
-                return false;
-            return date.DayOfWeek != DayOfWeek.Sunday && date.DayOfWeek != DayOfWeek.Saturday;
+            var client = new CookieAwareWebClient();
+            string input = client.Get(url);
+
+            string pattern = @"var disabledSpecificDays ?= ?\[ ?(.+) ?\];";
+            var match = Regex.Match(input, pattern);
+            if (match.Success)
+            {
+                var days = new List<DateTime>();
+                foreach (string s in match.Groups[1].Value.Split(','))
+                {
+                    DateTime dt;
+                    if (DateTime.TryParse(s.Trim(' ', '"'), out dt))
+                        days.Add(dt);
+                    else
+                        return Enumerable.Empty<DateTime>();
+                }
+                return days;
+            }
+            else
+                return Enumerable.Empty<DateTime>();
         }
 
         private static bool TryExtractText(string input, ExtractTextType type, out string extractedText)
@@ -228,6 +246,28 @@ namespace AutoSigner
                     string.Format("{0}\t{1}", t.Item2.ToString("yyyy-MM-dd"), t.Item3)))));
         }
 
+        private void chkRestrictDate_Checked(object sender, RoutedEventArgs e)
+        {
+            if (chkRestrictDate.IsChecked ?? false)
+            {
+                try
+                {
+                    exceptionalDates = GetExceptionalDates();
+                }
+                catch (Exception ex)
+                {
+                    exceptionalDates = Enumerable.Empty<DateTime>();
+
+                    chkRestrictDate.IsEnabled = false;
+                    chkRestrictDate.IsChecked = false;
+
+                    MessageBox.Show(string.Format("發生以下錯誤，無法讀取例外日期。\n{0}", ex.Message));
+                }
+
+                deDate_SelectedDatesChanged(null, null);
+            }
+        }
+
         private void deDate_PreviewMouseUp(object sender, MouseButtonEventArgs e)
         {
             if (Mouse.Captured is CalendarItem)
@@ -246,6 +286,26 @@ namespace AutoSigner
             foreach (DateTime date in dates)
                 SelectedDates.Add(date);
             deDate.SelectedDatesChanged += deDate_SelectedDatesChanged;
+        }
+
+        private bool IsDateAllowed(DateTime date)
+        {
+            if (chkRestrictDate.IsChecked ?? false)
+            {
+                bool isHoliday = date.DayOfWeek == DayOfWeek.Sunday || date.DayOfWeek == DayOfWeek.Saturday;
+
+                if (exceptionalDates.Contains(date))
+                    return isHoliday;
+                else
+                {
+                    DateTime lastMonth = DateTime.Today.AddMonths(-1);
+                    return !isHoliday
+                        && date.Date >= new DateTime(lastMonth.Year, lastMonth.Month, 26)
+                        && date.Date <= DateTime.Today;
+                }
+            }
+            else
+                return true;
         }
     }
 }
