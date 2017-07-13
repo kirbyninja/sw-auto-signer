@@ -4,37 +4,8 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:AutoSigner"
+        xmlns:vw="clr-namespace:AutoSigner.View"
         mc:Ignorable="d"
-        Title="MainWindow" Height="299.369" Width="527.65" DataContext="{Binding RelativeSource={RelativeSource Self}}" ResizeMode="NoResize">
-    <Grid>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="1*" />
-            <RowDefinition Height="1*" />
-            <RowDefinition Height="1*" />
-            <RowDefinition Height="1*" />
-        </Grid.RowDefinitions>
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="1*" />
-            <ColumnDefinition Width="1.4*" />
-        </Grid.ColumnDefinitions>
-        <Calendar Name="deDate" SelectionMode="MultipleRange" HorizontalAlignment="Center" Grid.Column="1" Grid.ColumnSpan="1" Grid.Row="0" Grid.RowSpan="4" VerticalAlignment="Center" RenderTransformOrigin="0.5,0.5" Height="Auto" Width="Auto">
-            <Calendar.RenderTransform>
-                <TransformGroup>
-                    <ScaleTransform ScaleX="1.4" ScaleY="1.4" />
-                    <SkewTransform />
-                    <RotateTransform />
-                    <TranslateTransform />
-                </TransformGroup>
-            </Calendar.RenderTransform>
-        </Calendar>
-        <Label x:Name="lbUserName" Content="帳號" HorizontalAlignment="Left" Margin="20,0,0,0" VerticalAlignment="Center" Grid.Row="0" />
-        <Label x:Name="lbPassword" Content="密碼" HorizontalAlignment="Left" Margin="20,22,0,14" VerticalAlignment="Center" Grid.Row="1" />
-        <TextBox x:Name="teUserName" HorizontalAlignment="Left" Margin="59,26,0,18" TextWrapping="Wrap" Text="" VerticalAlignment="Center" Width="150" />
-        <PasswordBox x:Name="pePassword" HorizontalAlignment="Left" Margin="59,22,0,22" Grid.Row="1"  VerticalAlignment="Center" Width="150" />
-        <Button x:Name="btnSubmit" Content="確定" HorizontalAlignment="Center" Margin="119,0,0,0" Grid.Row="3" VerticalAlignment="Center" Width="80" Click="btnSubmit_Click" />
-        <TextBox x:Name="ceHour" HorizontalAlignment="Left"  Margin="59,33,0,0" Grid.Row="2" TextWrapping="Wrap" Text="{Binding Hour,Mode=TwoWay}" TextAlignment="Right" VerticalAlignment="Top" Width="70" RenderTransformOrigin="0,0.609" />
-        <TextBox x:Name="ceMinute" HorizontalAlignment="Left"  Margin="139,33,0,0" Grid.Row="2" TextWrapping="Wrap" Text="{Binding Minute, Mode=TwoWay}" TextAlignment="Right" VerticalAlignment="Top" Width="70" />
-        <Label x:Name="lbTime" Content="時間" HorizontalAlignment="Left" Margin="20,22,0,14" VerticalAlignment="Center" Grid.Row="2" />
-        <CheckBox x:Name="chkRestrictDate" Content="限制日期" HorizontalAlignment="Left" Margin="20,0,0,0" Grid.Row="3" VerticalAlignment="Center" IsChecked="True" Width="80" Height="20" Checked="chkRestrictDate_Checked" />
-    </Grid>
+        Title="MainWindow" Height="299.369" Width="527.65" ResizeMode="NoResize">
+    <vw:SignInClientView />
 </Window>

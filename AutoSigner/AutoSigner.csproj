@@ -56,9 +56,20 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="CookieAwareWebClient.cs">
+    <Compile Include="Component\CookieAwareWebClient.cs">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="Component\RelayCommand.cs" />
+    <Compile Include="Component\SignInResult.cs" />
+    <Compile Include="Model\SignInClient.cs" />
+    <Compile Include="Model\SystemwebSignInClient.cs" />
+    <Compile Include="Model\WebPageToken.cs" />
+    <Compile Include="View\SignInClientView.xaml.cs">
+      <DependentUpon>SignInClientView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="ViewModel\SignInClientViewModel.cs" />
+    <Compile Include="ViewModel\SignInResultViewModel.cs" />
+    <Compile Include="ViewModel\ViewModelBase.cs" />
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -71,6 +82,10 @@
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Page Include="View\SignInClientView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs">

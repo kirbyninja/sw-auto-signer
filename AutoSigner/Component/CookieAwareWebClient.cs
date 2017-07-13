@@ -6,7 +6,7 @@ using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace AutoSigner
+namespace AutoSigner.Component
 {
     public class CookieAwareWebClient : WebClient
     {
@@ -36,7 +36,6 @@ namespace AutoSigner
         protected override WebRequest GetWebRequest(Uri address)
         {
             var request = (HttpWebRequest)base.GetWebRequest(address);
-            request.Host = "www.systemweb.com.tw:8080";
             request.UserAgent = "Mozilla/5.0 (Windows NT 6.1; Win64; x64; rv:50.0) Gecko/20100101 Firefox/50.0";
             request.Accept = "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8";
             request.KeepAlive = true;
