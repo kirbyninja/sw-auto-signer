@@ -36,15 +36,14 @@ namespace AutoSigner.Model
             {
                 bool isHoliday = date.DayOfWeek == DayOfWeek.Sunday || date.DayOfWeek == DayOfWeek.Saturday;
 
+                // 如果是例外日期，則原本是假日就變成工作日；原本是工作日就變假日。
                 if (exceptionalDates.Contains(date.Date))
-                    return isHoliday;
-                else
-                {
-                    DateTime lastMonth = DateTime.Today.AddMonths(-1);
-                    return !isHoliday
-                        && date.Date >= new DateTime(lastMonth.Year, lastMonth.Month, 26)
-                        && date.Date <= DateTime.Today;
-                }
+                    isHoliday = !isHoliday;
+
+                DateTime lastMonth = DateTime.Today.AddMonths(-1);
+                return !isHoliday
+                    && date.Date >= new DateTime(lastMonth.Year, lastMonth.Month, 26)
+                    && date.Date <= DateTime.Today;
             }
             catch (Exception)
             {
