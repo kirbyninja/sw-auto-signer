@@ -16,11 +16,11 @@ namespace AutoSigner.ViewModel
     {
         private readonly SignInClient client;
         private readonly ObservableCollection<SignInResultViewModel> results;
+        private readonly ICommand signInCommand;
 
         private int hour = 10;
         private int minute = 0;
         private DateTime[] selectedDates;
-        private ICommand signInCommand;
         private string userName;
 
         public SignInClientViewModel() : this(new SystemwebSignInClient())
@@ -30,6 +30,7 @@ namespace AutoSigner.ViewModel
         {
             this.client = client;
             results = new ObservableCollection<SignInResultViewModel>();
+            signInCommand = new RelayCommand(SignIn, CanSignIn);
         }
 
         public bool ApplyDateRestriction
@@ -79,7 +80,7 @@ namespace AutoSigner.ViewModel
 
         public SecureString SecurePassword { private get; set; }
 
-        public ICommand SignInCommand => signInCommand ?? (signInCommand = new RelayCommand(SignIn, CanSignIn));
+        public ICommand SignInCommand => signInCommand;
 
         public string UserName
         {

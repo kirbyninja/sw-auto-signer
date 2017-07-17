@@ -12,7 +12,7 @@ namespace AutoSigner.ViewModel
         {
             Date = date;
             Success = successs;
-            Message = message;
+            Message = message ?? string.Empty;
         }
 
         public DateTime Date { get; protected set; }
