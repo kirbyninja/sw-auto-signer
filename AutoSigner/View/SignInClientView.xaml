@@ -55,7 +55,7 @@
         </Calendar>
         <StackPanel Grid.Row="0">
             <Label Content="帳號" />
-            <TextBox Margin="10,0,0,0" Width="150" Text="{Binding UserName}" />
+            <TextBox Margin="10,0,0,0" Width="150" Text="{Binding UserName, UpdateSourceTrigger=PropertyChanged}" />
         </StackPanel>
         <StackPanel Grid.Row="1">
             <Label Content="密碼" />
@@ -67,7 +67,7 @@
             <TextBox Margin="10,0,0,0" Text="{Binding Minute}" TextAlignment="Right" Width="70" />
         </StackPanel>
         <StackPanel Grid.Row="3">
-            <CheckBox Content="限制日期" Margin="10,0,0,0" IsChecked="{Binding ApplyDateRestriction}" Width="80" Height="20" />
+            <CheckBox Name="checkBox" Content="限制日期" Margin="10,0,0,0" IsChecked="{Binding ApplyDateRestriction}" Width="80" Height="20" />
             <Button Content="簽到" Margin="10,0,0,0" Width="80" Command="{Binding SignInCommand}" />
         </StackPanel>
     </Grid>
