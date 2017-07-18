@@ -93,7 +93,7 @@ namespace AutoSigner.ViewModel
             if (sender is System.Windows.Controls.Calendar calendar)
             {
                 calendar.SelectedDatesChanged -= Calendar_SelectedDatesChanged;
-                selectedDates = calendar.SelectedDates.
+                selectedDates = calendar.SelectedDates.OrderBy(date => date).
                     Where(date => !ApplyDateRestriction || client.IsDateAllowed(date)).ToArray();
 
                 calendar.SelectedDates.Clear();
