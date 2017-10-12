@@ -19,6 +19,7 @@ namespace AutoSigner.ViewModel
 
         private int hour = 10;
         private int minute = 0;
+        private bool isBusy = false;
         private bool postponedSignIn = true;
         private double progress = 0d;
         private DateTime[] selectedDates;
@@ -120,11 +121,13 @@ namespace AutoSigner.ViewModel
         {
             return !string.IsNullOrWhiteSpace(userName)
                 && SecurePassword?.Length > 0
-                && selectedDates?.Count() > 0;
+                && selectedDates?.Count() > 0
+                && !isBusy;
         }
 
         private async Task SignIn(object parameter)
         {
+            isBusy = true;
             var results = new List<SignInResultViewModel>();
             var credential = new NetworkCredential(userName, SecurePassword);
             var random = new Random();
@@ -142,6 +145,7 @@ namespace AutoSigner.ViewModel
                 {
                     Logger?.Invoke(message);
                     Progress = 1.0;
+                    isBusy = false;
                     return;
                 }
                 results.Add(new SignInResultViewModel(date, result == SignInResult.Success, message));
@@ -153,6 +157,7 @@ namespace AutoSigner.ViewModel
                 results.Count(r => r.Success),
                 results.Count(r => !r.Success),
                 string.Join("\r\n", results)));
+            isBusy = false;
         }
     }
 }
