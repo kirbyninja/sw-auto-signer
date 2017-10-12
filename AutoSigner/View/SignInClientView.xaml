@@ -4,19 +4,16 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:local="clr-namespace:AutoSigner.View"
-             xmlns:vm="clr-namespace:AutoSigner.ViewModel"
              mc:Ignorable="d"
              d:DesignHeight="300"
              d:DesignWidth="300">
-    <UserControl.Resources>
-        <vm:SignInClientViewModel x:Key="client" />
-    </UserControl.Resources>
     <Grid>
         <Grid.Resources>
             <Style TargetType="StackPanel">
                 <Setter Property="Orientation" Value="Horizontal" />
                 <Setter Property="HorizontalAlignment" Value="Left" />
                 <Setter Property="VerticalAlignment" Value="Center" />
+                <Setter Property="Margin" Value="15,0,0,0" />
             </Style>
         </Grid.Resources>
         <Grid.DataContext>
@@ -26,7 +23,8 @@
             <RowDefinition Height="*" />
             <RowDefinition Height="*" />
             <RowDefinition Height="*" />
-            <RowDefinition Height="*" />
+            <RowDefinition Height="1.6*" />
+            <RowDefinition Height="auto" />
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="*" />
@@ -66,9 +64,23 @@
             <TextBox Margin="10,0,0,0" Text="{Binding Hour}" TextAlignment="Right"  Width="70" />
             <TextBox Margin="10,0,0,0" Text="{Binding Minute}" TextAlignment="Right" Width="70" />
         </StackPanel>
-        <StackPanel Grid.Row="3">
-            <CheckBox Name="checkBox" Content="限制日期" Margin="10,0,0,0" IsChecked="{Binding ApplyDateRestriction}" Width="80" Height="20" />
-            <Button Content="簽到" Margin="10,0,0,0" Width="80" Command="{Binding SignInCommand}" />
-        </StackPanel>
+        <Grid Grid.Row="3">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*" />
+                <RowDefinition Height="*" />
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+            <StackPanel Grid.RowSpan="2"  Orientation="Vertical">
+                <CheckBox  Name="checkBox" Content="限制日期" Margin="10,0,0,0" IsChecked="{Binding ApplyDateRestriction}" Width="80" Height="20" />
+                <CheckBox Content="延遲送簽" Margin="10,0,0,0" IsChecked="{Binding PostponedSignIn}" Width="80" Height="20" />
+            </StackPanel>
+            <StackPanel Grid.Column="1" Grid.RowSpan="2">
+                <Button Content="簽到" Margin="10,0,0,0" Width="80" Command="{Binding SignInCommand}" />
+            </StackPanel>
+        </Grid>
+        <ProgressBar Grid.Row="4" Grid.ColumnSpan="2" Minimum="0" Maximum="1" Value="{Binding Progress}"  Height="20" />
     </Grid>
 </UserControl>

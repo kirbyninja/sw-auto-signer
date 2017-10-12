@@ -15,11 +15,12 @@ namespace AutoSigner.ViewModel
     internal class SignInClientViewModel : ViewModelBase
     {
         private readonly SignInClient client;
-        private readonly ObservableCollection<SignInResultViewModel> results;
         private readonly ICommand signInCommand;
 
         private int hour = 10;
         private int minute = 0;
+        private bool postponedSignIn = true;
+        private double progress = 0d;
         private DateTime[] selectedDates;
         private string userName;
 
@@ -29,8 +30,7 @@ namespace AutoSigner.ViewModel
         public SignInClientViewModel(SignInClient client)
         {
             this.client = client;
-            results = new ObservableCollection<SignInResultViewModel>();
-            signInCommand = new RelayCommand(SignIn, CanSignIn);
+            signInCommand = new RelayCommand(async p => await SignIn(p), CanSignIn);
         }
 
         public bool ApplyDateRestriction
@@ -44,6 +44,12 @@ namespace AutoSigner.ViewModel
                     OnPropertyChanged(nameof(ApplyDateRestriction));
                 }
             }
+        }
+
+        public bool PostponedSignIn
+        {
+            get => postponedSignIn;
+            set => SetProperty(nameof(PostponedSignIn), ref postponedSignIn, value);
         }
 
         public string Hour
@@ -78,7 +84,11 @@ namespace AutoSigner.ViewModel
             }
         }
 
-        public ICollection<SignInResultViewModel> Results => results;
+        public double Progress
+        {
+            get => progress;
+            set => SetProperty(nameof(Progress), ref progress, value);
+        }
 
         public SecureString SecurePassword { private get; set; }
 
@@ -113,24 +123,29 @@ namespace AutoSigner.ViewModel
                 && selectedDates?.Count() > 0;
         }
 
-        private void SignIn(object parameter)
+        private async Task SignIn(object parameter)
         {
-            results.Clear();
+            var results = new List<SignInResultViewModel>();
             var credential = new NetworkCredential(userName, SecurePassword);
+            var random = new Random();
+
             foreach (DateTime date in selectedDates)
             {
                 DateTime dateTime = new DateTime(date.Year, date.Month, date.Day, hour, minute, 0);
 
-                var result = client.SignIn(credential, dateTime, out string message);
+                if (PostponedSignIn) await Task.Delay(random.Next(1000, 3000));
 
-                results.Add(new SignInResultViewModel(date, result == SignInResult.Success, message));
+                var result = client.SignIn(credential, dateTime, out string message);
 
                 // 若帳號密碼有誤就不再繼續之後的嘗試，以免被封鎖。
                 if (result == SignInResult.InvalidCredential)
                 {
                     Logger?.Invoke(message);
+                    Progress = 1.0;
                     return;
                 }
+                results.Add(new SignInResultViewModel(date, result == SignInResult.Success, message));
+                Progress = 1.0 * results.Count() / selectedDates.Count();
             }
 
             Logger?.Invoke(string.Format("{0}筆資料中，有{1}筆成功、{2}筆失敗：\r\n{3}",

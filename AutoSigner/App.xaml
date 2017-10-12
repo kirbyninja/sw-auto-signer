@@ -2,8 +2,9 @@
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:local="clr-namespace:AutoSigner"
+             xmlns:vm="clr-namespace:AutoSigner.ViewModel"
              StartupUri="MainWindow.xaml">
     <Application.Resources>
-         
+        <vm:SignInClientViewModel x:Key="client" />
     </Application.Resources>
 </Application>

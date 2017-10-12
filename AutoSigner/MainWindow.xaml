@@ -7,5 +7,11 @@
         xmlns:vw="clr-namespace:AutoSigner.View"
         mc:Ignorable="d"
         Title="MainWindow" Height="299.369" Width="527.65" ResizeMode="NoResize">
+    <Window.DataContext>
+        <Binding Source="{StaticResource client}" />
+    </Window.DataContext>
+    <Window.TaskbarItemInfo>
+        <TaskbarItemInfo ProgressValue="{Binding Progress}" ProgressState="Normal" />
+    </Window.TaskbarItemInfo>
     <vw:SignInClientView />
 </Window>
