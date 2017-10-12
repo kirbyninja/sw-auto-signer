@@ -61,6 +61,8 @@ namespace AutoSigner.ViewModel
             }
         }
 
+        public Action<string> Logger { get; set; }
+
         public string Minute
         {
             get { return minute.ToString(); }
@@ -126,14 +128,12 @@ namespace AutoSigner.ViewModel
                 // 若帳號密碼有誤就不再繼續之後的嘗試，以免被封鎖。
                 if (result == SignInResult.InvalidCredential)
                 {
-                    // 先暫時把顯示結果的程式碼放在這。
-                    System.Windows.MessageBox.Show(message);
+                    Logger?.Invoke(message);
                     return;
                 }
             }
 
-            // 先暫時把顯示結果的程式碼放在這。
-            System.Windows.MessageBox.Show(string.Format("{0}筆資料中，有{1}筆成功、{2}筆失敗：\r\n{3}",
+            Logger?.Invoke(string.Format("{0}筆資料中，有{1}筆成功、{2}筆失敗：\r\n{3}",
                 results.Count,
                 results.Count(r => r.Success),
                 results.Count(r => !r.Success),

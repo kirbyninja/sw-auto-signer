@@ -28,6 +28,7 @@ namespace AutoSigner.View
         {
             InitializeComponent();
             viewModel = TryFindResource("client") as SignInClientViewModel ?? throw new ArgumentException();
+            viewModel.Logger = (s) => MessageBox.Show(s);
             calendar.SelectedDatesChanged += viewModel.Calendar_SelectedDatesChanged;
             checkBox.Checked += (sender, e) => viewModel.Calendar_SelectedDatesChanged(calendar, null);
             calendar.SelectedDate = DateTime.Today;
